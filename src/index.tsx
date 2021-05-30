@@ -17,18 +17,20 @@ const Square: React.VFC<SquareProps> = ({ value, onClick }) => (
 
 const Board = () => {
   const [squares, setSquares] = useState<SquareValue[]>(Array(9).fill(null));
+  const [xIsNext, setXIsNext] = useState<boolean>(true);
 
   const handleClick = (i: number) => {
     const currentSquares = squares.slice();
-    currentSquares[i] = 'X';
+    currentSquares[i] = xIsNext ? 'X' : 'O';
     setSquares(currentSquares);
+    setXIsNext(!xIsNext);
   };
 
   const renderSquare = (i: number) => (
     <Square value={squares[i]} onClick={() => handleClick(i)} />
   );
 
-  const status = 'Next player: X';
+  const status = `Next player: ${xIsNext ? 'X' : 'O'}`;
 
   return (
     <div>
