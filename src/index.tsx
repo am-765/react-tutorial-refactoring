@@ -1,15 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const Square = () => (
-  <button className="square" type="button">
-    {/* TODO */}
+type SquareValue = 'X' | 'O' | null;
+
+type SquareProps = {
+  value: SquareValue;
+  onClick: () => void;
+};
+
+const Square: React.VFC<SquareProps> = ({ value, onClick }) => (
+  <button className="square" type="button" onClick={onClick}>
+    {value}
   </button>
 );
 
 const Board = () => {
-  const renderSquare = (_i: number) => <Square />;
+  const [squares, setSquares] = useState<SquareValue[]>(Array(9).fill(null));
+
+  const handleClick = (i: number) => {
+    const currentSquares = squares.slice();
+    currentSquares[i] = 'X';
+    setSquares(currentSquares);
+  };
+
+  const renderSquare = (i: number) => (
+    <Square value={squares[i]} onClick={() => handleClick(i)} />
+  );
+
   const status = 'Next player: X';
 
   return (
