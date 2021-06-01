@@ -16,6 +16,8 @@ type BoardProps = {
 
 type History = {
   squares: SquareValue[];
+  col?: number;
+  row?: number;
 };
 
 const calculateWinner = (squares: SquareValue[]) => {
@@ -73,7 +75,11 @@ const Board = (props: BoardProps) => {
 
 const Game = () => {
   const [history, setHistory] = useState<History[]>([
-    { squares: Array<SquareValue>(9).fill(null) },
+    {
+      squares: Array<SquareValue>(9).fill(null),
+      col: 0,
+      row: 0,
+    },
   ]);
   const [stepNumber, setStepNumber] = useState<number>(0);
   const [xIsNext, setXIsNext] = useState<boolean>(true);
@@ -86,7 +92,11 @@ const Game = () => {
       return;
     }
     squares[i] = xIsNext ? 'X' : 'O';
-    setHistory(historyArray.concat([{ squares }]));
+    setHistory(
+      historyArray.concat([
+        { squares, col: (i % 3) + 1, row: Math.floor(i / 3) + 1 },
+      ]),
+    );
     setStepNumber(historyArray.length);
     setXIsNext(!xIsNext);
   };
@@ -106,8 +116,10 @@ const Game = () => {
     status = `Next player: ${xIsNext ? 'X' : 'O'}`;
   }
 
-  const moves = history.map((_step, move) => {
-    const desc = move ? `Go to move #${move}` : 'Go to game start';
+  const moves = history.map((step, move) => {
+    const desc = move
+      ? `Go to move #${move} (${String(step.col)}, ${String(step.row)})`
+      : 'Go to game start';
 
     return (
       <li key={move.toString()}>
