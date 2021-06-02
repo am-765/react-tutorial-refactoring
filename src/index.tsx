@@ -117,13 +117,14 @@ const Game = () => {
   }
 
   const moves = history.map((step, move) => {
+    const isActive = move === stepNumber ? 'is-active' : '';
     const desc = move
       ? `Go to move #${move} (${String(step.col)}, ${String(step.row)})`
       : 'Go to game start';
 
     return (
       <li key={move.toString()}>
-        <button type="button" onClick={() => jumpTo(move)}>
+        <button type="button" onClick={() => jumpTo(move)} className={isActive}>
           {desc}
         </button>
       </li>

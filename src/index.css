@@ -49,3 +49,7 @@ ul {
 .game-info {
   margin-left: 20px;
 }
+
+.is-active {
+  font-weight: bold;
+}
