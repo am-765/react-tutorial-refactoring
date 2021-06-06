@@ -79,6 +79,7 @@ const Game = () => {
   ]);
   const [stepNumber, setStepNumber] = useState<number>(0);
   const [xIsNext, setXIsNext] = useState<boolean>(true);
+  const [asc, setAsc] = useState<boolean>(true);
 
   const handleClick = (i: number) => {
     const historyArray = history.slice(0, stepNumber + 1);
@@ -101,6 +102,8 @@ const Game = () => {
     setStepNumber(step);
     setXIsNext(step % 2 === 0);
   };
+
+  const handleSort = () => setAsc(!asc);
 
   const historyArray = history;
   const current = historyArray[stepNumber];
@@ -134,7 +137,10 @@ const Game = () => {
       </div>
       <div className="game-info">
         <div>{status}</div>
-        <ol>{moves}</ol>
+        <ol>{asc ? moves : moves.reverse()}</ol>
+        <button type="button" onClick={() => handleSort()}>
+          Asc / Desc
+        </button>
       </div>
     </div>
   );
