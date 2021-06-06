@@ -49,13 +49,17 @@ const Square: React.VFC<SquareProps> = ({ value, onClick }) => (
 
 const Board = (props: BoardProps) => {
   const renderSquare = (i: number) => (
-    <Square value={props.squares[i]} onClick={() => props.onClick(i)} />
+    <Square
+      value={props.squares[i]}
+      onClick={() => props.onClick(i)}
+      key={i.toString()}
+    />
   );
 
   const boardRow = Array(3)
     .fill(0)
     .map((_a, i) => (
-      <div className="board-row">
+      <div className="board-row" key={i.toString()}>
         {Array(3)
           .fill(0)
           .map((_b, j) => renderSquare(i * 3 + j))}
