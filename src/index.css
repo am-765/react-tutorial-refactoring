@@ -50,6 +50,10 @@ ul {
   margin-left: 20px;
 }
 
-.is-active {
+.is-current {
   font-weight: bold;
+}
+
+.is-active {
+  background-color: yellow;
 }

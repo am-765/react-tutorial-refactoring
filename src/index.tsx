@@ -7,11 +7,13 @@ type SquareValue = 'X' | 'O' | null;
 type SquareProps = {
   value: SquareValue;
   onClick: () => void;
+  highlight: boolean;
 };
 
 type BoardProps = {
   squares: SquareValue[];
   onClick: (i: number) => void;
+  highlightLine: number[];
 };
 
 type History = {
@@ -34,25 +36,33 @@ const calculateWinner = (squares: SquareValue[]) => {
   for (let i = 0; i < lines.length; i += 1) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return {
+        winner: squares[a],
+        line: lines[i],
+      };
     }
   }
 
   return null;
 };
 
-const Square: React.VFC<SquareProps> = ({ value, onClick }) => (
-  <button className="square" type="button" onClick={onClick}>
+const Square: React.VFC<SquareProps> = ({ value, onClick, highlight }) => (
+  <button
+    className={`square ${highlight ? 'is-active' : ''}`}
+    type="button"
+    onClick={onClick}
+  >
     {value}
   </button>
 );
 
 const Board = (props: BoardProps) => {
-  const renderSquare = (i: number) => (
+  const renderSquare = (i: number, highlightValue = false) => (
     <Square
       value={props.squares[i]}
       onClick={() => props.onClick(i)}
       key={i.toString()}
+      highlight={highlightValue}
     />
   );
 
@@ -62,7 +72,12 @@ const Board = (props: BoardProps) => {
       <div className="board-row" key={i.toString()}>
         {Array(3)
           .fill(0)
-          .map((_b, j) => renderSquare(i * 3 + j))}
+          .map((_b, j) =>
+            renderSquare(
+              i * 3 + j,
+              props.highlightLine.indexOf(i * 3 + j) !== -1,
+            ),
+          )}
       </div>
     ));
 
@@ -107,23 +122,27 @@ const Game = () => {
 
   const historyArray = history;
   const current = historyArray[stepNumber];
-  const winner = calculateWinner(current.squares);
+  const getWinner = calculateWinner(current.squares);
   let status;
-  if (winner) {
-    status = `Winner: ${winner}`;
+  if (getWinner) {
+    status = `Winner: ${String(getWinner.winner)}`;
   } else {
     status = `Next player: ${xIsNext ? 'X' : 'O'}`;
   }
 
   const moves = history.map((step, move) => {
-    const isActive = move === stepNumber ? 'is-active' : '';
+    const isCurrent = move === stepNumber ? 'is-current' : '';
     const desc = move
       ? `Go to move #${move} (${String(step.col)}, ${String(step.row)})`
       : 'Go to game start';
 
     return (
       <li key={move.toString()}>
-        <button type="button" onClick={() => jumpTo(move)} className={isActive}>
+        <button
+          type="button"
+          onClick={() => jumpTo(move)}
+          className={isCurrent}
+        >
           {desc}
         </button>
       </li>
@@ -133,7 +152,11 @@ const Game = () => {
   return (
     <div className="game">
       <div className="game-board">
-        <Board squares={current.squares} onClick={(i) => handleClick(i)} />
+        <Board
+          squares={current.squares}
+          onClick={(i) => handleClick(i)}
+          highlightLine={getWinner ? getWinner.line : []}
+        />
       </div>
       <div className="game-info">
         <div>{status}</div>
