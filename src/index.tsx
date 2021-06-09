@@ -126,6 +126,8 @@ const Game = () => {
   let status;
   if (getWinner) {
     status = `Winner: ${String(getWinner.winner)}`;
+  } else if (stepNumber === 9) {
+    status = `Draw`;
   } else {
     status = `Next player: ${xIsNext ? 'X' : 'O'}`;
   }
